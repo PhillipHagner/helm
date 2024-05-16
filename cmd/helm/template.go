@@ -55,6 +55,7 @@ func newTemplateCmd(cfg *action.Configuration, out io.Writer) *cobra.Command {
 	var kubeVersion string
 	var extraAPIs []string
 	var showFiles []string
+	var valuesOnly bool
 
 	cmd := &cobra.Command{
 		Use:   "template [NAME] [CHART]",
@@ -132,6 +133,10 @@ func newTemplateCmd(cfg *action.Configuration, out io.Writer) *cobra.Command {
 
 					}
 				}
+				if valuesOnly {
+					fmt.Println("Values:")
+					return
+				}
 
 				// if we have a list of files to render, then check that each of the
 				// provided files exists in the chart.
@@ -200,6 +205,7 @@ func newTemplateCmd(cfg *action.Configuration, out io.Writer) *cobra.Command {
 	f.StringVar(&kubeVersion, "kube-version", "", "Kubernetes version used for Capabilities.KubeVersion")
 	f.StringSliceVarP(&extraAPIs, "api-versions", "a", []string{}, "Kubernetes api versions used for Capabilities.APIVersions")
 	f.BoolVar(&client.UseReleaseName, "release-name", false, "use release name in the output-dir path.")
+	f.BoolVar(&valuesOnly, "values-only", false, "print the values only it gathered")
 	bindPostRenderFlag(cmd, &client.PostRenderer)
 
 	return cmd
